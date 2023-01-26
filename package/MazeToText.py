@@ -1,4 +1,5 @@
 import pygame, random, argparse
+import map
 from pygame.locals import *
 from pprint import pprint
 FLOOR = 0
@@ -33,6 +34,9 @@ class maze():  # The main maze class
         self.y = 0
 
         self.generate()
+
+    def ReturnMaze(self):
+        return self.layout
 
     def Regenerate(self):
         self.__init__(self.width, self.height, self.tile_size)
@@ -119,6 +123,80 @@ class maze():  # The main maze class
                 return True
 
 
+class mazeSolver():
+    def __init__(self, maze, x=0, y=0):
+        # Initial position in the maze given
+        self.x = x
+        self.y = y
+        self.maze = maze
+        self.neighbours = []
+        self.stack = []
+
+    def Reset(self, maze, x=0, y=0):
+        self.__init__(maze, x=x, y=y)
+
+    def solve(self):
+        # Call this to find and make next move
+        self.neighbours = []
+        self.maze.layout[self.x][self.y] = PATH
+
+        # Look for open cells
+        if (self.y - 1) >= 0:
+            if self.maze.layout[self.x][self.y - 1] == FLOOR:  # Above
+                self.neighbours.append((self.x, self.y - 1))
+
+        if (self.x - 1) >= 0:
+            if self.maze.layout[self.x - 1][self.y] == FLOOR:  # Left
+                self.neighbours.append((self.x - 1, self.y))
+
+        if (self.x + 1) < self.maze.width:
+            if self.maze.layout[self.x + 1][self.y] == FLOOR:  # Right
+                self.neighbours.append((self.x + 1, self.y))
+
+        if (self.y + 1) < self.maze.height:
+            if self.maze.layout[self.x][self.y + 1] == FLOOR:  # Down
+                self.neighbours.append((self.x, self.y + 1))
+
+        if self.neighbours:  # If we found some neighbours that are open
+            new_x, new_y = self.neighbours[0]  # Take the first option
+            self.stack.append((self.x, self.y))  # Save old position to stack
+            self.x = new_x
+            self.y = new_y
+
+        else:  # Cell has no open neighbours
+            if self.stack:
+                # Go back to the previous current cell
+                self.x, self.y = self.stack.pop()
+
+        return self.x, self.y
+
+
+def checkControls(maze, solver):
+    # check player controls (return False if we need to quit)
+    pygame.event.pump()
+    key = pygame.key.get_pressed()
+
+    if key[pygame.K_ESCAPE]:
+        return False
+
+    if key[pygame.K_TAB]:
+        screen.fill(FLOOR_COLOUR)
+        maze.Regenerate()
+        solver.Reset(maze)
+
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            mouse_x /= maze.tile_size
+            mouse_y /= maze.tile_size
+
+            if (maze.layout[mouse_x][mouse_y] != WALL):
+                maze.ClearPath()
+                solver.Reset(maze, x=mouse_x, y=mouse_y)
+        elif event.type == pygame.QUIT:
+            return False
+
+    return True
 
 
 if __name__ == "__main__":
@@ -144,11 +222,13 @@ if __name__ == "__main__":
     try:
 
         new_maze = maze(width_cells, height_cells, tile_size)
-        print(new_maze.layout)
 
-
+        new_solver = mazeSolver(new_maze)
         screen.fill(FLOOR_COLOUR)
         run = True
+        while True:
+            new_maze.draw(*new_solver.solve())
+            run = checkControls(new_maze, new_solver)
 
     finally:
         pygame.quit()

@@ -15,6 +15,8 @@ visited = []
 stack = []
 solution = {}
 
+
+
 #build grid
 def build_grid(x, y, screen):
     global wCell
