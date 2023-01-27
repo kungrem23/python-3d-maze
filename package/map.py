@@ -5,8 +5,10 @@ import random
 try:
     spawnpoint = 0
     pool = []
-    text_map1 = MazeToText.maze(10, 10, 10).layout
-    new_m = ['00' + '1' * 8]
+    x_size = 20
+    y_size = 20
+    text_map1 = MazeToText.maze(x_size, y_size, 10).layout
+    new_m = ['00' + '1' * (x_size - 2)]
     for i in text_map1:
         new_m.append("".join(list(map(str, i))))
     for i in new_m:
