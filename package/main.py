@@ -4,6 +4,9 @@ from player import Player
 import math
 import map
 from ray import ray_casting
+import random
+import MazeToText
+import time
 
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -17,6 +20,8 @@ while True:
     try:
         if maps is None:
             maps = map.world_map
+            print('2')
+            print(maps)
             player = Player()
 
         for event in pygame.event.get():
@@ -28,20 +33,16 @@ while True:
 
         pygame.draw.rect(sc, BLUE, (0, 0, WIDTH, HALF_HEIGHT))
         pygame.draw.rect(sc, DARKGRAY, (0, HALF_HEIGHT, WIDTH, HALF_HEIGHT))
-
         ray_casting(sc, player.pos, player.angle)
 
         pygame.draw.circle(sc, BLACK, (int(player.x), int(player.y)), 12)
         pygame.draw.line(sc, GREEN, player.pos, (player.x + WIDTH * math.cos(player.angle),
                                                  player.y + WIDTH * math.sin(player.angle)), 2)
         if maps is not None:
-
             for x, y in maps:
                 pygame.draw.rect(sc, PURPLE, (x, y, TILE, TILE), 1)
 
         pygame.display.flip()
         clock.tick(FPS)
-
-
-    except Exception:
+    except ValueError:
         pass
