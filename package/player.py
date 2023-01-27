@@ -2,12 +2,13 @@ from settings import *
 import pygame
 import math
 import map
+import settings
 
 class Player:
     def __init__(self):
         print(5, map.spawnpoint)
-        self.x = map.spawnpoint[0] * 70 + 30
-        self.y = map.spawnpoint[1] * 70 + 30
+        self.x = map.spawnpoint[0] * settings.TILE + 30
+        self.y = map.spawnpoint[1] * settings.TILE + 30
         print(self.x, self.y)
         self.angle = player_angle
 
