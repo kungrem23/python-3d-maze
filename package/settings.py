@@ -6,7 +6,7 @@ HEIGHT = 800
 HALF_WIDTH = WIDTH // 2
 HALF_HEIGHT = HEIGHT // 2
 FPS = 60
-TILE = 70
+TILE = 30
 
 # ray casting settings
 FOV = math.pi / 3
