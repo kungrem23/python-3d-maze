@@ -1,47 +1,48 @@
 import pygame
 from settings import *
 from player import Player
-import math
-import map
 from ray import ray_casting
+import map
+from spriteObj import *
+import drawing
 
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
+sc_map = pygame.Surface((WIDTH // MAP_SCALE, HEIGHT // MAP_SCALE))
 clock = pygame.time.Clock()
 
-player = None
-
-maps = None
-
+drawing = drawing.Drawing(sc, sc_map)
+sprites = Sprites()
+draw = False
+maps = map.world_map
+player = Player()
 while True:
-    try:
-        if maps is None:
-            maps = map.world_map
-            player = Player()
+    if pygame.mouse.get_focused():
+        pygame.mouse.set_visible(False)
+    else:
+        pygame.mouse.set_visible(True)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
+    if player.x < 68 and player.y < 68:
+        print("You have won")
 
-        player.movement()
-        sc.fill(BLACK)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                if draw:
+                    draw = False
+                else:
+                    draw = True
+    player.movement()
+    sc.fill(BLACK)
+    drawing.background(player.angle)
+    print(player.x, player.y, sprites.list_of_objects)
+    walls = ray_casting(player, drawing.texture)
+    drawing.world(walls + [obj.object_locate(player, walls) for obj in sprites.list_of_objects])
+    drawing.fps(clock)
+    if draw:
+        drawing.mini_map(player)
 
-        pygame.draw.rect(sc, BLUE, (0, 0, WIDTH, HALF_HEIGHT))
-        pygame.draw.rect(sc, DARKGRAY, (0, HALF_HEIGHT, WIDTH, HALF_HEIGHT))
-
-        ray_casting(sc, player.pos, player.angle)
-
-        pygame.draw.circle(sc, BLACK, (int(player.x), int(player.y)), 12)
-        pygame.draw.line(sc, GREEN, player.pos, (player.x + WIDTH * math.cos(player.angle),
-                                                 player.y + WIDTH * math.sin(player.angle)), 2)
-        if maps is not None:
-
-            for x, y in maps:
-                pygame.draw.rect(sc, PURPLE, (x, y, TILE, TILE), 1)
-
-        pygame.display.flip()
-        clock.tick(FPS)
-
-
-    except Exception:
-        pass
+    pygame.display.flip()
+    clock.tick()

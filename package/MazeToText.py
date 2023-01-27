@@ -2,6 +2,7 @@ import pygame, random, argparse
 import map
 from pygame.locals import *
 from pprint import pprint
+
 FLOOR = 0
 WALL = 1
 PATH = 2
@@ -232,7 +233,3 @@ if __name__ == "__main__":
 
     finally:
         pygame.quit()
-
-
-
-
