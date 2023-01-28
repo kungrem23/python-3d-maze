@@ -84,6 +84,7 @@ class Player:
         sin_a = math.sin(self.angle)
         cos_a = math.cos(self.angle)
         keys = pygame.key.get_pressed()
+        mouseMotion = pygame.mouse.get_rel()
         if keys[pygame.K_ESCAPE]:
             exit()
 
@@ -103,10 +104,17 @@ class Player:
             dx = -player_speed * sin_a
             dy = player_speed * cos_a
             self.detect_collision(dx, dy)
-
-        if keys[pygame.K_LEFT]:
-            self.angle -= 0.03
-        if keys[pygame.K_RIGHT]:
-            self.angle += 0.03
+        if mouseMotion[0] != 0:
+        #     self.angle -= 0.003 * mouseMotion[0]
+        #     pygame.mouse.set_pos(600, 400)
+        # if mouseMotion[0] > 0:
+            self.angle += 0.002 * mouseMotion[0]
+            pygame.mouse.set_pos(600, 400)
 
         self.angle %= DOUBLE_PI
+
+    # def mouse_motion(self, how_much):
+    #     if keys[pygame.K_LEFT]:
+    #         self.angle -= 0.03
+    #     if keys[pygame.K_RIGHT]:
+    #         self.angle += 0.03
