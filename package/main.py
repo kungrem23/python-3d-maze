@@ -91,6 +91,8 @@ draw = False
 maps = map.world_map
 d = map.new_m
 countofcoins = 0
+countofcross = 7
+
 coins = []
 # начинаем расставлять монетки
 for i in range(0, len(d)):
@@ -115,17 +117,20 @@ while True:
         pygame.mouse.set_visible(True)
     # Вышли из лабиринти - конец игры
     if player.x < 80 and player.y < 80:
-        end_screen(sc, countofcoins - len(sprites.list_of_objects), countofcoins)
+        end_screen(sc, countofcoins - len([i for i in sprites.list_of_objects if i.blocked]), countofcoins)
     # Нажатие кнопки q - режим разработчика с включенной картой
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             terminate()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
+            if event.key == pygame.K_p:
                 if draw:
                     draw = False
                 else:
                     draw = True
+            if event.key == pygame.K_e:
+                if countofcross > 0:
+                    sprites.makecross((player.x, player.y))
 
     # Движение игрока
     player.movement()
@@ -134,9 +139,11 @@ while True:
     drawing.background(player.angle)
     # отрисовка стен
     walls = ray_casting(player, drawing.texture)
+
     drawing.world(walls + [obj.object_locate(player, walls) for obj in sprites.list_of_objects])
     drawing.fps(clock)
-    drawing.coins(countofcoins - len(sprites.list_of_objects), countofcoins)
+    drawing.coins(countofcoins - len([i for i in sprites.list_of_objects if i.blocked]), countofcoins)
+    drawing.crosses(countofcross - len([i for i in sprites.list_of_objects if i.blocked is not True]))
     # миникарта
     if draw:
         print("Активирован режим разработчика")

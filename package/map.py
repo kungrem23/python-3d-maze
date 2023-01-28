@@ -8,6 +8,7 @@ import random
 try:
     spawnpoint = 0
     pool = []
+    #Только четные!
     x_size = 18
     y_size = 18
     # Получили текстовый вид лабиринта из класса MazeToText
@@ -23,8 +24,7 @@ try:
             new_m[i] = '1' + new_m[i] + '1'
         else:
             new_m[i] = '0' + new_m[i] + '1'
-    for i in new_m:
-        print(i)
+
     for i in range(0, len(new_m)):
         for j in range(0, len(new_m)):
             if new_m[i][j] == '0' and i != 0 and j != 0 and j != 1:

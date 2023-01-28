@@ -32,7 +32,6 @@ class Drawing:
         for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):
             if obj[0]:
                 _, object, object_pos = obj
-              #  print(object_pos)
                 self.sc.blit(object, object_pos)
 
     # Отрисовка фпс
@@ -46,6 +45,13 @@ class Drawing:
         display_coins = f"Собрано {now} из {all}"
         render = self.font.render(display_coins, 0, RED)
         self.sc.blit(render, COINS_POS)
+
+    # Отрисовка количества крестиков
+
+    def crosses(self, now):
+        display_coins = f"Осталось крестиков {now}"
+        render = self.font.render(display_coins, 0, RED)
+        self.sc.blit(render, CROSS_POS)
 
     # Отрисовка миникарты
     def mini_map(self, player):

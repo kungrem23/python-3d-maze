@@ -10,20 +10,22 @@ class Sprites:
     def __init__(self):
         self.sprite_types = {
             'coin': pygame.image.load('sprites/coin.png').convert_alpha(),
-
+            'cross': pygame.image.load('sprites/cross.png').convert_alpha()
         }
         self.list_of_objects = [
-            # SpriteObject(self.sprite_types['coin'], True, (1, 1), 1, 0.4),
+
 
         ]
 
     def makelistofcoins(self, count, coords):
+
         for i in range(count):
-            self.list_of_objects.append(SpriteObject(self.sprite_types['coin'], True, coords[i], 1, 0.4, True))
+            self.list_of_objects.append(SpriteObject(self.sprite_types['coin'], True, coords[i], 1, 0.4, True, True))
         global lst
         lst = self.list_of_objects
 
-
+    def makecross(self, coords):
+        self.list_of_objects.append(SpriteObject(self.sprite_types['cross'], True, coords, 1, 0.4, False, False))
 
     def DeleteCoin(self, ind):
         self.list_of_objects.pop(ind)
@@ -39,16 +41,23 @@ def TakeCoin(coin_pos):
             break
     return a, lst
 
+
 # Сам объект спрайта
 class SpriteObject:
-    def __init__(self, object, static, pos, shift, scale, blocked):
+    def __init__(self, object, static, pos, shift, scale, blocked, iscoords):
         self.object = object
         self.static = static
-        self.pos = self.x, self.y = pos[0] * TILE + 15, pos[1] * TILE + 15
+        if iscoords:
+            self.pos = self.x, self.y = pos[0] * TILE + 15, pos[1] * TILE + 15
+        else:
+            self.pos = self.x, self.y = pos[0], pos[1]
         self.blocked = blocked
         self.shift = shift
         self.scale = scale
-        self.side = 20
+        if iscoords:
+            self.side = 20
+        else:
+            self.side = 0
         self.pos = self.x - self.side // 2, self.y - self.side // 2
         if not static:
             self.sprite_angles = [frozenset(range(i, i + 45)) for i in range(0, 360, 45)]
@@ -96,6 +105,7 @@ class SpriteObject:
 
             sprite_pos = (current_ray * SCALE - half_proj_height, HALF_HEIGHT - half_proj_height + shift)
             sprite = pygame.transform.scale(self.object, (proj_height, proj_height))
+
             return (distance_to_sprite, sprite, sprite_pos)
         else:
             return (False,)

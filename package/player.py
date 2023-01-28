@@ -7,7 +7,7 @@ import settings
 from spriteObj import TakeCoin
 
 
-#Класс игрока
+# Класс игрока
 class Player:
     def __init__(self, sprites):
         self.x = map.spawnpoint[0] * settings.TILE + 15
@@ -19,13 +19,23 @@ class Player:
         # collision parameters
         self.side = 20
         self.rect = pygame.Rect(self.x, self.y, self.side, self.side + 10)
+
         self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
-                                  self.sprites.list_of_objects ]
+                                  self.sprites.list_of_objects if obj.blocked]
         self.collision_list = collision_walls + self.collision_sprites
 
     @property
     def pos(self):
         return (self.x, self.y)
+
+   # def updatecollisions(self, obj):
+
+     #   self.collision_sprites.clear()
+     #   self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
+     #    self.sprites.list_of_objects]
+      #S  self.collision_list = collision_walls + self.collision_sprites
+
+
     # Смотрим столкновения
     def detect_collision(self, dx, dy):
         next_rect = self.rect.copy()
@@ -41,7 +51,6 @@ class Player:
                     spr, lst = TakeCoin(a)
                     for i in range(len(self.sprites.list_of_objects)):
                         if self.sprites.list_of_objects[i] == spr:
-
                             self.sprites.list_of_objects.pop(i)
                     self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
                                               self.sprites.list_of_objects]
