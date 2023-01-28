@@ -4,6 +4,7 @@ from ray import ray_casting
 import map
 
 
+#Класс с отрисовкой фпс, мини-карты, и вызова рей кастинга
 class Drawing:
     def __init__(self, sc, sc_map):
         self.sc = sc
@@ -18,6 +19,7 @@ class Drawing:
                          }
         self.texture = self.textures[str(map.texture)]
 
+    # Отрисовка неба и пола
     def background(self, angle):
         sky_offset = -10 * math.degrees(angle) % WIDTH
         self.sc.blit(self.textures['S'], (sky_offset, 0))
@@ -25,6 +27,7 @@ class Drawing:
         self.sc.blit(self.textures['S'], (sky_offset + WIDTH, 0))
         pygame.draw.rect(self.sc, DARKGRAY, (0, HALF_HEIGHT, WIDTH, HALF_HEIGHT))
 
+    # Отрисовка мира
     def world(self, world_objects):
         for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):
             if obj[0]:
@@ -32,11 +35,19 @@ class Drawing:
               #  print(object_pos)
                 self.sc.blit(object, object_pos)
 
+    # Отрисовка фпс
     def fps(self, clock):
         display_fps = str(int(clock.get_fps()))
         render = self.font.render(display_fps, 0, RED)
         self.sc.blit(render, FPS_POS)
 
+    # Отрисовка количества монет
+    def coins(self, now, all):
+        display_coins = f"Собрано {now} из {all}"
+        render = self.font.render(display_coins, 0, RED)
+        self.sc.blit(render, COINS_POS)
+
+    # Отрисовка миникарты
     def mini_map(self, player):
         self.sc_map.fill(BLACK)
         map_x, map_y = player.x // MAP_SCALE, player.y // MAP_SCALE

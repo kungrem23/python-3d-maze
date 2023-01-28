@@ -7,6 +7,7 @@ def mapping(a, b):
     return (a // TILE) * TILE, (b // TILE) * TILE
 
 
+# рей кастинг
 def ray_casting(player, textures):
     walls = []
     ox, oy = player.pos

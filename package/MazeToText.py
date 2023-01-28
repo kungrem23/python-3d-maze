@@ -1,7 +1,6 @@
 import pygame, random, argparse
 import map
 from pygame.locals import *
-from pprint import pprint
 
 FLOOR = 0
 WALL = 1

@@ -1,6 +1,6 @@
 import math
 
-# game settings
+#game settings
 WIDTH = 1200
 HEIGHT = 800
 HALF_WIDTH = WIDTH // 2
@@ -8,6 +8,7 @@ HALF_HEIGHT = HEIGHT // 2
 FPS = 60
 TILE = 40
 FPS_POS = (WIDTH - 65, 5)
+COINS_POS = (WIDTH - 500, 0)
 
 # minimap settings
 MAP_SCALE = 5

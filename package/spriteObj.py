@@ -2,25 +2,54 @@ import pygame
 from settings import *
 import player
 
+lst = []
+
+
+# Класс-управляющий спрайтами
 class Sprites:
     def __init__(self):
         self.sprite_types = {
             'coin': pygame.image.load('sprites/coin.png').convert_alpha(),
+
         }
         self.list_of_objects = [
-            SpriteObject(self.sprite_types['coin'], True, (1, 1), 1.8, 0.6),
+            # SpriteObject(self.sprite_types['coin'], True, (1, 1), 1, 0.4),
 
         ]
 
+    def makelistofcoins(self, count, coords):
+        for i in range(count):
+            self.list_of_objects.append(SpriteObject(self.sprite_types['coin'], True, coords[i], 1, 0.4, True))
+        global lst
+        lst = self.list_of_objects
 
+
+
+    def DeleteCoin(self, ind):
+        self.list_of_objects.pop(ind)
+
+
+# Когда подобрали монетку
+def TakeCoin(coin_pos):
+    global a
+    for i in range(len(lst)):
+        if (lst[i].x - 10, lst[i].y - 10) == coin_pos:
+            a = lst[i]
+            lst.pop(i)
+            break
+    return a, lst
+
+# Сам объект спрайта
 class SpriteObject:
-    def __init__(self, object, static, pos, shift, scale):
+    def __init__(self, object, static, pos, shift, scale, blocked):
         self.object = object
         self.static = static
-        self.pos = self.x, self.y = pos[0] * TILE, pos[1] * TILE
+        self.pos = self.x, self.y = pos[0] * TILE + 15, pos[1] * TILE + 15
+        self.blocked = blocked
         self.shift = shift
         self.scale = scale
-
+        self.side = 20
+        self.pos = self.x - self.side // 2, self.y - self.side // 2
         if not static:
             self.sprite_angles = [frozenset(range(i, i + 45)) for i in range(0, 360, 45)]
             self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
@@ -44,7 +73,14 @@ class SpriteObject:
 
         fake_ray = current_ray + FAKE_RAYS
         if 0 <= fake_ray <= NUM_RAYS - 1 + 2 * FAKE_RAYS and distance_to_sprite < fake_walls[fake_ray][0]:
+
+            if distance_to_sprite == 0:
+                distance_to_sprite = 0.1
+            elif self.scale == 0:
+                self.scale = 0.1
+
             proj_height = min(int(PROJ_COEFF / distance_to_sprite * self.scale), 2 * HEIGHT)
+
             half_proj_height = proj_height // 2
             shift = half_proj_height * self.shift
 
