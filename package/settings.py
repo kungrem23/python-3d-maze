@@ -10,6 +10,7 @@ TILE = 40
 FPS_POS = (WIDTH - 65, 5)
 COINS_POS = (WIDTH - 500, 0)
 CROSS_POS = (WIDTH - 500, 30)
+TIME_POS = (WIDTH - 500, 60)
 
 # minimap settings
 MAP_SCALE = 5
