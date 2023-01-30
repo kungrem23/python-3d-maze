@@ -2,6 +2,7 @@ import pygame
 from settings import *
 from ray import ray_casting
 import map
+import time
 
 
 #Класс с отрисовкой фпс, мини-карты, и вызова рей кастинга
@@ -39,6 +40,11 @@ class Drawing:
         display_fps = str(int(clock.get_fps()))
         render = self.font.render(display_fps, 0, RED)
         self.sc.blit(render, FPS_POS)
+
+    def timer(self, start_time):
+        display_fps = str(start_time // 1000)
+        render = self.font.render(display_fps, 0, RED)
+        self.sc.blit(render, TIME_POS)
 
     # Отрисовка количества монет
     def coins(self, now, all):
