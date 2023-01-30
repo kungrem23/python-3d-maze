@@ -7,6 +7,7 @@ from spriteObj import *
 import sys
 import drawing
 import random
+import time
 
 
 # Выход из игры
@@ -83,6 +84,8 @@ sc = pygame.display.set_mode((WIDTH, HEIGHT))
 sc_map = pygame.Surface((WIDTH // MAP_SCALE, HEIGHT // MAP_SCALE))
 clock = pygame.time.Clock()
 start_screen(sc)
+start_time = pygame.time.get_ticks()
+check_time = False
 
 drawing = drawing.Drawing(sc, sc_map)
 sprites = Sprites()
@@ -110,6 +113,7 @@ sprites.makelistofcoins(countofcoins, coins)
 player = Player(sprites)
 # Цикл игры
 while True:
+    print(pygame.time.get_ticks())
     # Если мышь не на экране, то скрываем
     if pygame.mouse.get_focused():
         pygame.mouse.set_visible(False)
@@ -139,11 +143,11 @@ while True:
     drawing.background(player.angle)
     # отрисовка стен
     walls = ray_casting(player, drawing.texture)
-
     drawing.world(walls + [obj.object_locate(player, walls) for obj in sprites.list_of_objects])
     drawing.fps(clock)
     drawing.coins(countofcoins - len([i for i in sprites.list_of_objects if i.blocked]), countofcoins)
     drawing.crosses(countofcross - len([i for i in sprites.list_of_objects if i.blocked is not True]))
+    drawing.timer(pygame.time.get_ticks() - start_time)
     # миникарта
     if draw:
         print("Активирован режим разработчика")
