@@ -96,9 +96,11 @@ draw = False
 maps = map.world_map
 d = map.new_m
 countofcoins = 0
+countofdemons = 0
 countofcross = 7
 
 coins = []
+demons = []
 # начинаем расставлять монетки
 for i in range(0, len(d)):
     for j in range(0, len(d)):
@@ -109,8 +111,19 @@ for i in range(0, len(d)):
                 countofcoins += 1
 if countofcoins == 0:
     countofcoins = 1
+for i in range(0, len(d)):
+    for j in range(0, len(d)):
+        if d[i][j] == '0' and i != 0 and i != 1 and j != 0 and j != 1 and [j, i] not in coins:
+            a = random.randint(0, 100)
+            if a < 10:
+                demons.append([j, i])
+                countofdemons += 1
+if countofdemons == 0:
+    countofdemons = 1
 # сделали лист спрайтов монет
 sprites.makelistofcoins(countofcoins, coins)
+sprites.makelistofdemons(countofdemons, demons)
+
 
 player = Player(sprites)
 drawing = drawing.Drawing(sc, sc_map, player)

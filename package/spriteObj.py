@@ -58,7 +58,7 @@ class Sprites:
     def makelistofcoins(self, count, coords):
 
         for i in range(count):
-            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_devil'], coords[i], True))
+            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_coin'], coords[i], True))
         global lst
         lst = self.list_of_objects
 
@@ -67,6 +67,12 @@ class Sprites:
 
     def DeleteCoin(self, ind):
         self.list_of_objects.pop(ind)
+
+    def makelistofdemons(self, count, coords):
+        for i in range(count):
+            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_devil'], coords[i], True))
+        global lst
+        lst = self.list_of_objects
 
 
 # Когда подобрали монетку
