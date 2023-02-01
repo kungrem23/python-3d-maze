@@ -16,7 +16,7 @@ class Player:
         self.angle = player_angle
         self.sensitivity = 0.004
 
-        # collision parameters
+        # параметры коллизии
         self.side = 20
         self.rect = pygame.Rect(self.x, self.y, self.side, self.side + 10)
 
@@ -24,16 +24,11 @@ class Player:
                                   self.sprites.list_of_objects if obj.blocked]
         self.collision_list = collision_walls + self.collision_sprites
 
+        self.shot = False
+
     @property
     def pos(self):
         return (self.x, self.y)
-
-   # def updatecollisions(self, obj):
-
-     #   self.collision_sprites.clear()
-     #   self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
-     #    self.sprites.list_of_objects]
-      #S  self.collision_list = collision_walls + self.collision_sprites
 
 
     # Смотрим столкновения
@@ -53,7 +48,7 @@ class Player:
                         if self.sprites.list_of_objects[i] == spr:
                             self.sprites.list_of_objects.pop(i)
                     self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
-                                              self.sprites.list_of_objects]
+                                              self.sprites.list_of_objects if obj.blocked]
                     self.collision_list = collision_walls + self.collision_sprites
                 if dx > 0:
                     delta_x += next_rect.right - hit_rect.left
@@ -87,7 +82,7 @@ class Player:
         mouseMotion = pygame.mouse.get_rel()
         if keys[pygame.K_ESCAPE]:
             exit()
-
+        # Управление wasd
         if keys[pygame.K_w]:
             dx = player_speed * cos_a
             dy = player_speed * sin_a
@@ -104,17 +99,16 @@ class Player:
             dx = -player_speed * sin_a
             dy = player_speed * cos_a
             self.detect_collision(dx, dy)
+        #Управление мышью
         if mouseMotion[0] != 0:
-        #     self.angle -= 0.003 * mouseMotion[0]
-        #     pygame.mouse.set_pos(600, 400)
-        # if mouseMotion[0] > 0:
             self.angle += 0.002 * mouseMotion[0]
             pygame.mouse.set_pos(600, 400)
-
+        #Управление стрелками
+        if keys[pygame.K_LEFT]:
+            self.angle -= 0.03
+        if keys[pygame.K_RIGHT]:
+            self.angle += 0.03
         self.angle %= DOUBLE_PI
 
-    # def mouse_motion(self, how_much):
-    #     if keys[pygame.K_LEFT]:
-    #         self.angle -= 0.03
-    #     if keys[pygame.K_RIGHT]:
-    #         self.angle += 0.03
+
+

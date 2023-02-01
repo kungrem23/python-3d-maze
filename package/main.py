@@ -1,12 +1,13 @@
 import pygame
 from settings import *
 from player import Player
-from ray import ray_casting
+from ray import *
 import map
 from spriteObj import *
 import sys
 import drawing
 import random
+import time
 
 
 # Выход из игры
@@ -23,7 +24,7 @@ def start_screen(sc):
                   "Постарайтесь собрать как можно больше монет",
                   "Для начала нажмите ЛКМ"]
 
-    fon = pygame.transform.scale(pygame.image.load('sprites/fon.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(pygame.image.load('sprites/fon/fon.jpg'), (WIDTH, HEIGHT))
 
     sc.blit(fon, (0, 0))
     pygame.font.init()
@@ -52,9 +53,10 @@ def start_screen(sc):
 # Экран конца игры
 def end_screen(sc, coins, all):
     intro_text = ["Поздравляем! Вы выбрались", "",
-                  f"Вы собрали {coins} монет из {all}"]
+                  f"Вы собрали {coins} монет из {all}",
+                  f"Время: {pygame.time.get_ticks() // (1000 * 60)}:{(pygame.time.get_ticks() - pygame.time.get_ticks() // (1000 * 60)) // 1000}",]
 
-    fon = pygame.transform.scale(pygame.image.load('sprites/fon.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(pygame.image.load('sprites/fon/fon.jpg'), (WIDTH, HEIGHT))
 
     sc.blit(fon, (0, 0))
     pygame.font.init()
@@ -73,6 +75,7 @@ def end_screen(sc, coins, all):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
+
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -83,8 +86,10 @@ sc = pygame.display.set_mode((WIDTH, HEIGHT))
 sc_map = pygame.Surface((WIDTH // MAP_SCALE, HEIGHT // MAP_SCALE))
 clock = pygame.time.Clock()
 start_screen(sc)
+start_time = pygame.time.get_ticks()
+check_time = False
 
-drawing = drawing.Drawing(sc, sc_map)
+
 sprites = Sprites()
 draw = False
 # карта мира
@@ -108,8 +113,11 @@ if countofcoins == 0:
 sprites.makelistofcoins(countofcoins, coins)
 
 player = Player(sprites)
+drawing = drawing.Drawing(sc, sc_map, player)
+
 # Цикл игры
 while True:
+
     # Если мышь не на экране, то скрываем
     if pygame.mouse.get_focused():
         pygame.mouse.set_visible(False)
@@ -122,6 +130,10 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             terminate()
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1 and not player.shot:
+                player.shot = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
                 if draw:
@@ -134,16 +146,18 @@ while True:
 
     # Движение игрока
     player.movement()
-    sc.fill(BLACK)
 
     drawing.background(player.angle)
-    # отрисовка стен
-    walls = ray_casting(player, drawing.texture)
+    walls, wall_shot = ray_casting_walls(player, drawing.texture)
 
-    drawing.world(walls + [obj.object_locate(player, walls) for obj in sprites.list_of_objects])
+    # отрисовка стен
+  #  print(len(world_map), len(walls))
+    drawing.world(walls + [obj.object_locate(player) for obj in sprites.list_of_objects])
+    drawing.player_weapon([wall_shot, sprites.sprite_shot])
     drawing.fps(clock)
     drawing.coins(countofcoins - len([i for i in sprites.list_of_objects if i.blocked]), countofcoins)
     drawing.crosses(countofcross - len([i for i in sprites.list_of_objects if i.blocked is not True]))
+    drawing.timer(pygame.time.get_ticks() - start_time)
     # миникарта
     if draw:
         print("Активирован режим разработчика")
