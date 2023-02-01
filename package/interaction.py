@@ -48,19 +48,22 @@ class Interaction:
 
     def interaction_objects(self, player):
         if self.player.shot and self.drawing.shot_animation_trigger:
-            for obj in sorted(self.sprites.list_of_objects, key=lambda obj: obj.distance_to_sprite):
-                if obj.is_on_fire[1]:
-                    if obj.is_dead != 'immortal' and not obj.is_dead:
+            try:
+                for obj in sorted(self.sprites.list_of_objects, key=lambda obj: obj.distance_to_sprite):
+                    if obj.is_on_fire[1]:
+                        if obj.is_dead != 'immortal' and not obj.is_dead:
 
-                        if ray_casting_npc_player(obj.x, obj.y,
-                                                  world_map, self.player.pos):
+                            if ray_casting_npc_player(obj.x, obj.y,
+                                                      world_map, self.player.pos):
 
-                            obj.is_dead = True
-                            obj.blocked = None
-                            self.drawing.shot_animation_trigger = False
+                                obj.is_dead = True
+                                obj.blocked = None
+                                self.drawing.shot_animation_trigger = False
 
-                            player.update_collision()
-                    break
+                                player.update_collision()
+                        break
+            except Exception:
+                pass
 
 
     def clear_world(self):

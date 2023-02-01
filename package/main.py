@@ -99,21 +99,34 @@ draw = False
 maps = map.world_map
 d = map.new_m
 countofcoins = 0
+countofdemons = 0
 countofcross = 7
 
 coins = []
+demons = []
 # начинаем расставлять монетки
 for i in range(0, len(d)):
     for j in range(0, len(d)):
         if d[i][j] == '0' and i != 0 and i != 1 and j != 0 and j != 1:
             a = random.randint(0, 100)
-            if a < 20:
+            if a < 10:
                 coins.append([j, i])
                 countofcoins += 1
 if countofcoins == 0:
     countofcoins = 1
+for i in range(0, len(d)):
+    for j in range(0, len(d)):
+        if d[i][j] == '0' and i != 0 and i != 1 and j != 0 and j != 1 and [j, i] not in coins:
+            a = random.randint(0, 100)
+            if a < 10:
+                demons.append([j, i])
+                countofdemons += 1
+if countofdemons == 0:
+    countofdemons = 1
 # сделали лист спрайтов монет
 sprites.makelistofcoins(countofcoins, coins)
+# сделали лист спрайтов демонов
+sprites.makelistofdemons(countofdemons, demons)
 
 player = Player(sprites)
 drawing = drawing.Drawing(sc, sc_map, player)
@@ -145,14 +158,16 @@ while True:
                 else:
                     draw = True
             if event.key == pygame.K_e:
-                if countofcross > 0:
+
+                if countofcross - len([i for i in sprites.list_of_objects if i.scale == 0.6]) > 0:
                     sprites.makecross((player.x, player.y))
+
             if event.key == pygame.K_SPACE:
                 player.shot = True
 
     # Движение игрока
     player.movement()
-  #  print(player.pos)
+
     drawing.background(player.angle)
     walls, wall_shot = ray_casting_walls(player, drawing.texture)
     interaction.interaction_objects(player)
@@ -160,8 +175,8 @@ while True:
     drawing.world(walls + [obj.object_locate(player) for obj in sprites.list_of_objects])
     drawing.player_weapon([wall_shot, sprites.sprite_shot])
     drawing.fps(clock)
-    drawing.coins(countofcoins - len([i for i in sprites.list_of_objects if i.blocked]), countofcoins)
-    drawing.crosses(countofcross - len([i for i in sprites.list_of_objects if i.blocked is not True]))
+    drawing.coins(countofcoins - len([i for i in sprites.list_of_objects if i.scale == 0.4]), countofcoins)
+    drawing.crosses(countofcross - len([i for i in sprites.list_of_objects if i.scale == 0.6]))
     drawing.timer(pygame.time.get_ticks() - start_time)
     # миникарта
     if draw:

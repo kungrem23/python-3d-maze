@@ -20,11 +20,10 @@ class Sprites:
                 'animation_dist': 800,
                 'animation_speed': 10,
                 'blocked': True,
-                'is_dead': None,
+                'is_dead': 'immortal',
                 'dead_shift': 0.6,
                 'flag': 'npc',
-                'death_animation': deque([pygame.image.load(f'sprites/devil/death/{i}.png')
-                                         .convert_alpha() for i in range(6)])
+                'death_animation': False
             },
             'sprite_cross': {
                 'sprite': pygame.image.load('sprites/cross/cross.png').convert_alpha(),
@@ -72,7 +71,7 @@ class Sprites:
     def makelistofcoins(self, count, coords):
 
         for i in range(count):
-            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_devil'], coords[i], True, True))
+            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_coin'], coords[i], True, False))
         global lst
         lst = self.list_of_objects
 
@@ -81,6 +80,12 @@ class Sprites:
 
     def DeleteCoin(self, ind):
         self.list_of_objects.pop(ind)
+
+    def makelistofdemons(self, count, coords):
+        for i in range(count):
+            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_devil'], coords[i], True, True))
+        global lst
+        lst = self.list_of_objects
 
 
 # Когда подобрали монетку
