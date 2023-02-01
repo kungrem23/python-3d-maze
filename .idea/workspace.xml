@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1e6be11e-fef8-4709-b043-044d3ff25d95" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package/drawing.py" beforeDir="false" afterPath="$PROJECT_DIR$/package/drawing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/package/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package/interaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/package/interaction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/package/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package/ray.py" beforeDir="false" afterPath="$PROJECT_DIR$/package/ray.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package/spriteObj.py" beforeDir="false" afterPath="$PROJECT_DIR$/package/spriteObj.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

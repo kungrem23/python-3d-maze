@@ -5,8 +5,8 @@ import math
 import pygame
 from spriteObj import *
 
+
 def ray_casting_npc_player(npc_x, npc_y, world_map, player_pos):
-   #ad print(npc_x, npc_y, player_pos)
     ox, oy = player_pos
     xm, ym = mapping(ox, oy)
     delta_x, delta_y = ox - npc_x, oy - npc_y
@@ -54,7 +54,7 @@ class Interaction:
 
                         if ray_casting_npc_player(obj.x, obj.y,
                                                   world_map, self.player.pos):
-                      #      print(len(self.sprites.list_of_objects))
+
                             obj.is_dead = True
                             obj.blocked = None
                             self.drawing.shot_animation_trigger = False
@@ -62,23 +62,6 @@ class Interaction:
                             player.update_collision()
                     break
 
-    # def npc_action(self):
-    #     for obj in self.sprites.list_of_objects:
-    #         if obj.flag == 'npc' and not obj.is_dead:
-    #             if ray_casting_npc_player(obj.x, obj.y,
-    #                                       self.sprites.blocked_doors,
-    #                                       world_map, self.player.pos):
-    #                 obj.npc_action_trigger = True
-    #                 self.npc_move(obj)
-    #             else:
-    #                 obj.npc_action_trigger = False
-
-    # def npc_move(self, obj):
-    #     if abs(obj.distance_to_sprite) > TILE:
-    #         dx = obj.x - self.player.pos[0]
-    #         dy = obj.y - self.player.pos[1]
-    #         obj.x = obj.x + 1 if dx < 0 else obj.x - 1
-    #         obj.y = obj.y + 1 if dy < 0 else obj.y - 1
 
     def clear_world(self):
         deleted_objects = self.sprites.list_of_objects[:]
