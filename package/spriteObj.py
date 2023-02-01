@@ -19,7 +19,12 @@ class Sprites:
                 'animation': None,
                 'animation_dist': 800,
                 'animation_speed': 10,
-                'blocked': True
+                'blocked': True,
+                'is_dead': None,
+                'dead_shift': 0.6,
+                'flag': 'npc',
+                'death_animation': deque([pygame.image.load(f'sprites/devil/death/{i}.png')
+                                         .convert_alpha() for i in range(6)])
             },
             'sprite_cross': {
                 'sprite': pygame.image.load('sprites/cross/cross.png').convert_alpha(),
@@ -30,6 +35,10 @@ class Sprites:
                 'animation_dist': 800,
                 'animation_speed': 10,
                 'blocked': False,
+                'is_dead': 'immortal',
+                'dead_shift': 0.6,
+                'flag': 'decor',
+                'death_animation': False
             },
             'sprite_devil': {
                 'sprite': [pygame.image.load(f'sprites/devil/base/{i}.png').convert_alpha() for i in range(8)],
@@ -40,7 +49,12 @@ class Sprites:
                     [pygame.image.load(f'sprites/devil/anim/{i}.png').convert_alpha() for i in range(9)]),
                 'animation_dist': 150,
                 'animation_speed': 10,
-                'blocked': False,
+                'death_animation': deque([pygame.image.load(f'sprites/devil/death/{i}.png')
+                                         .convert_alpha() for i in range(6)]),
+                'blocked': True,
+                'is_dead': None,
+                'dead_shift': 0.6,
+                'flag': 'npc',
             }
         }
 
@@ -58,12 +72,12 @@ class Sprites:
     def makelistofcoins(self, count, coords):
 
         for i in range(count):
-            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_devil'], coords[i], True))
+            self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_devil'], coords[i], True, True))
         global lst
         lst = self.list_of_objects
 
     def makecross(self, coords):
-        self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_cross'], coords, False))
+        self.list_of_objects.append(SpriteObject(self.sprite_parameters['sprite_cross'], coords, False, False))
 
     def DeleteCoin(self, ind):
         self.list_of_objects.pop(ind)
@@ -80,12 +94,23 @@ def TakeCoin(coin_pos):
     return a, lst
 
 
+
+
 # Сам объект спрайта
 class SpriteObject:
-    def __init__(self, parameters, pos, iscoords):
+    def __init__(self, parameters, pos, iscoords, isnpc):
         self.object = parameters['sprite']
+
+        self.flag = parameters['flag']
+        # self.obj_action = parameters['obj_action'].copy()
         self.viewing_angles = parameters['viewing_angles']
         self.shift = parameters['shift']
+        if parameters['death_animation']:
+            self.death_animation = parameters['death_animation'].copy()
+            self.is_dead = parameters['is_dead']
+            self.dead_shift = parameters['dead_shift']
+        else:
+            self.is_dead = 'immortal'
         self.scale = parameters['scale']
         if parameters['animation'] is not None:
             self.animation = parameters['animation'].copy()
@@ -95,15 +120,17 @@ class SpriteObject:
         self.animation_speed = parameters['animation_speed']
         self.blocked = parameters['blocked']
         self.animation_count = 0
+        self.dead_animation_count = 0
+        self.delete = False
         if iscoords:
-            self.pos = self.x, self.y = pos[0] * TILE + 15, pos[1] * TILE + 15
+            self.pos = self.x, self.y = pos[0] * TILE + 20, pos[1] * TILE + 20
         else:
             self.pos = self.x, self.y = pos[0], pos[1]
 
-        if iscoords:
+        if isnpc is not True:
             self.side = 20
         else:
-            self.side = 0
+            self.side = 55
         self.pos = self.x - self.side // 2, self.y - self.side // 2
         if self.viewing_angles:
             self.sprite_angles = [frozenset(range(i, i + 45)) for i in range(0, 360, 45)]
@@ -132,6 +159,7 @@ class SpriteObject:
             half_sprite_width = sprite_width // 2
             half_sprite_height = sprite_height // 2
             shift = half_sprite_height * self.shift
+
             # sprite animation
             sprite_object = self.object
             if self.animation and self.distance_to_sprite < self.animation_dist:
@@ -142,15 +170,20 @@ class SpriteObject:
                     self.animation.rotate()
                     self.animation_count = 0
 
+            if self.is_dead and self.is_dead != 'immortal':
 
-            if self.animation:
-                sprite_object = self.sprite_animation()
+                sprite_object = self.dead_animation()
+                shift = half_sprite_height * self.dead_shift
+                sprite_height = int(sprite_height / 1.3)
             else:
                 sprite_object = self.sprite_animation()
 
 
             sprite_pos = (self.current_ray * SCALE - half_sprite_width, HALF_HEIGHT - half_sprite_height + shift)
             sprite = pygame.transform.scale(sprite_object, (sprite_width, sprite_height))
+
+
+
             return (self.distance_to_sprite, sprite, sprite_pos)
         else:
             return (False,)
@@ -167,6 +200,17 @@ class SpriteObject:
                 self.animation_count = 0
             return sprite_object
         return self.object
+
+    def dead_animation(self):
+
+        if len(self.death_animation):
+            if self.dead_animation_count < self.animation_speed:
+                self.dead_sprite = self.death_animation[0]
+                self.dead_animation_count += 1
+            else:
+                self.dead_sprite = self.death_animation.popleft()
+                self.dead_animation_count = 0
+        return self.dead_sprite
 
     @property
     def is_on_fire(self):

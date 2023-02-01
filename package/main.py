@@ -8,7 +8,7 @@ import sys
 import drawing
 import random
 import time
-
+from interaction import *
 
 # Выход из игры
 def terminate():
@@ -52,9 +52,12 @@ def start_screen(sc):
 
 # Экран конца игры
 def end_screen(sc, coins, all):
+    minutes = pygame.time.get_ticks() // (1000 * 60)
+    seconds = pygame.time.get_ticks() - (minutes * 1000 * 60)
+
     intro_text = ["Поздравляем! Вы выбрались", "",
                   f"Вы собрали {coins} монет из {all}",
-                  f"Время: {pygame.time.get_ticks() // (1000 * 60)}:{(pygame.time.get_ticks() - pygame.time.get_ticks() // (1000 * 60)) // 1000}",]
+                  f"Время: {minutes}:{seconds // 1000}",]
 
     fon = pygame.transform.scale(pygame.image.load('sprites/fon/fon.jpg'), (WIDTH, HEIGHT))
 
@@ -104,7 +107,7 @@ for i in range(0, len(d)):
     for j in range(0, len(d)):
         if d[i][j] == '0' and i != 0 and i != 1 and j != 0 and j != 1:
             a = random.randint(0, 100)
-            if a < 10:
+            if a < 20:
                 coins.append([j, i])
                 countofcoins += 1
 if countofcoins == 0:
@@ -114,7 +117,7 @@ sprites.makelistofcoins(countofcoins, coins)
 
 player = Player(sprites)
 drawing = drawing.Drawing(sc, sc_map, player)
-
+interaction = Interaction(player, sprites, drawing)
 # Цикл игры
 while True:
 
@@ -134,6 +137,7 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and not player.shot:
                 player.shot = True
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
                 if draw:
@@ -143,15 +147,16 @@ while True:
             if event.key == pygame.K_e:
                 if countofcross > 0:
                     sprites.makecross((player.x, player.y))
+            if event.key == pygame.K_SPACE:
+                player.shot = True
 
     # Движение игрока
     player.movement()
-
+  #  print(player.pos)
     drawing.background(player.angle)
     walls, wall_shot = ray_casting_walls(player, drawing.texture)
-
+    interaction.interaction_objects(player)
     # отрисовка стен
-  #  print(len(world_map), len(walls))
     drawing.world(walls + [obj.object_locate(player) for obj in sprites.list_of_objects])
     drawing.player_weapon([wall_shot, sprites.sprite_shot])
     drawing.fps(clock)

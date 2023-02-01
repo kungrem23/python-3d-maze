@@ -4,7 +4,8 @@ from ray import ray_casting
 import map
 from collections import deque
 
-#Класс с отрисовкой фпс, мини-карты, и вызова рей кастинга
+
+# Класс с отрисовкой фпс, мини-карты, и вызова рей кастинга
 class Drawing:
     def __init__(self, sc, sc_map, player):
         self.player = player
@@ -21,7 +22,7 @@ class Drawing:
 
         self.texture = self.textures[str(map.texture)]
 
-        #параметры оружия
+        # параметры оружия
         self.weapon_base_sprite = pygame.image.load('sprites/shotgun/base/0.png').convert_alpha()
         self.weapon_shot_animation = deque([pygame.image.load(f'sprites/shotgun/shot/{i}.png').convert_alpha()
                                             for i in range(20)])
@@ -32,11 +33,10 @@ class Drawing:
         self.shot_animation_speed = 3
         self.shot_animation_count = 0
         self.shot_animation_trigger = True
-        #эффект стрельбы
+        # эффект стрельбы
         self.sfx = deque([pygame.image.load(f'sprites/sfx/{i}.png').convert_alpha() for i in range(9)])
         self.sfx_length_count = 0
         self.sfx_length = len(self.sfx)
-
 
     # Отрисовка неба и пола
     def background(self, angle):
@@ -50,7 +50,6 @@ class Drawing:
     def world(self, world_objects):
         for obj in sorted(world_objects, key=lambda n: n[0], reverse=True):
             if obj[0]:
-
                 _, object, object_pos = obj
                 self.sc.blit(object, object_pos)
 
@@ -60,31 +59,29 @@ class Drawing:
         render = self.font.render(display_fps, 0, RED)
         self.sc.blit(render, FPS_POS)
 
-
-    #отрисовка оружия
+    # отрисовка оружия
     def player_weapon(self, shots):
-         if self.player.shot:
+        if self.player.shot:
 
-             self.shot_projection = min(shots)[1] // 2
-             self.bullet_sfx()
-             shot_sprite = self.weapon_shot_animation[0]
-             self.sc.blit(shot_sprite, self.weapon_pos)
-             self.shot_animation_count += 1
-             if self.shot_animation_count == self.shot_animation_speed:
-                 self.weapon_shot_animation.rotate(-1)
-                 self.shot_animation_count = 0
-                 self.shot_length_count += 1
-                 self.shot_animation_trigger = False
-             if self.shot_length_count == self.shot_length:
-                 self.player.shot = False
-                 self.shot_length_count = 0
-                 self.sfx_length_count = 0
-                 self.shot_animation_trigger = True
-         else:
-             self.sc.blit(self.weapon_base_sprite, self.weapon_pos)
+            self.shot_projection = min(shots)[1] // 2
+            self.bullet_sfx()
+            shot_sprite = self.weapon_shot_animation[0]
+            self.sc.blit(shot_sprite, self.weapon_pos)
+            self.shot_animation_count += 1
+            if self.shot_animation_count == self.shot_animation_speed:
+                self.weapon_shot_animation.rotate(-1)
+                self.shot_animation_count = 0
+                self.shot_length_count += 1
+                self.shot_animation_trigger = False
+            if self.shot_length_count == self.shot_length:
+                self.player.shot = False
+                self.shot_length_count = 0
+                self.sfx_length_count = 0
+                self.shot_animation_trigger = True
+        else:
+            self.sc.blit(self.weapon_base_sprite, self.weapon_pos)
 
-
-    #отрисовка выстрела
+    # отрисовка выстрела
     def bullet_sfx(self):
         if self.sfx_length_count < self.sfx_length:
             sfx = pygame.transform.scale(self.sfx[0], (self.shot_projection, self.shot_projection))
@@ -92,19 +89,23 @@ class Drawing:
             self.sc.blit(sfx, (HALF_WIDTH - sfx_rect.w // 2, HALF_HEIGHT - sfx_rect.h // 2))
             self.sfx_length_count += 1
             self.sfx.rotate(-1)
+
     # Отрисовка количества монет
     def coins(self, now, all):
         display_coins = f"Собрано {now} из {all}"
         render = self.font.render(display_coins, 0, RED)
         self.sc.blit(render, COINS_POS)
 
+    # Таймер
     def timer(self, start_time):
         minutes = start_time // (1000 * 60)
         seconds = start_time - minutes * 1000 * 60
-        display_fps = f"{minutes}:{seconds // 1000}"
+        if seconds // 1000 < 10:
+            display_fps = f"{minutes}:0{seconds // 1000}"
+        else:
+            display_fps = f"{minutes}:{seconds // 1000}"
         render = self.font.render(display_fps, 0, RED)
         self.sc.blit(render, TIME_POS)
-
 
     # Отрисовка количества крестиков
 

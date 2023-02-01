@@ -17,11 +17,13 @@ class Player:
         self.sensitivity = 0.004
 
         # параметры коллизии
-        self.side = 20
+        self.side = 15
         self.rect = pygame.Rect(self.x, self.y, self.side, self.side + 10)
+
 
         self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
                                   self.sprites.list_of_objects if obj.blocked]
+
         self.collision_list = collision_walls + self.collision_sprites
 
         self.shot = False
@@ -29,6 +31,16 @@ class Player:
     @property
     def pos(self):
         return (self.x, self.y)
+
+
+
+
+    def update_collision(self):
+
+        self.collision_sprites = [pygame.Rect(*obj.pos, obj.side, obj.side) for obj in
+                                  self.sprites.list_of_objects if obj.blocked]
+
+        self.collision_list = collision_walls + self.collision_sprites
 
 
     # Смотрим столкновения
@@ -41,6 +53,7 @@ class Player:
             for hit_index in hit_indexes:
                 hit_rect = self.collision_list[hit_index]
                 if hit_rect.size == (20, 20):
+                    print(1)
                     # Столкнулись с монеткой
                     a = (hit_rect.x, hit_rect.y)
                     spr, lst = TakeCoin(a)
@@ -105,10 +118,7 @@ class Player:
             pygame.mouse.set_pos(600, 400)
         #Управление стрелками
         if keys[pygame.K_LEFT]:
-            self.angle -= 0.03
+            self.angle -= 0.02
         if keys[pygame.K_RIGHT]:
-            self.angle += 0.03
+            self.angle += 0.02
         self.angle %= DOUBLE_PI
-
-
-
