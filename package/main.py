@@ -52,15 +52,33 @@ def start_screen(sc):
 
 # Экран конца игры
 def end_screen(sc, coins, all):
-    minutes = pygame.time.get_ticks() // (1000 * 60)
-    seconds = pygame.time.get_ticks() - (minutes * 1000 * 60)
+    scores_file = open('scores.txt')
+    scores = scores_file.readlines()
+    scores_file.close()
+    highscore = scores[0].rsplit()[0]
+    last = scores[1]
+    highscore_minutes = int(highscore) // 60
+    highscore_seconds = int(highscore) % 60
+    last_minutes = int(last) // 60
+    last_seconds = int(last) % 60
+    play_time = pygame.time.get_ticks() // 1000
+    minutes = play_time // 60
+    seconds = play_time - (minutes * 60)
 
     intro_text = ["Поздравляем! Вы выбрались", "",
                   f"Вы собрали {coins} монет из {all}",
-                  f"Время: {minutes}:{seconds // 1000}",]
+                  f"Время: {minutes}:{seconds}",
+                  ''
+                  f"Рекордное время: {highscore_minutes}:{highscore_seconds}",
+                  f"Последнее время: {last_minutes}:{last_seconds}"]
 
     fon = pygame.transform.scale(pygame.image.load('sprites/fon/fon.jpg'), (WIDTH, HEIGHT))
-
+    rewrite_scores = open('scores.txt', mode='w')
+    if play_time < int(highscore):
+        rewrite_scores.write(str(play_time) + '\n' + str(play_time))
+    else:
+        rewrite_scores.write(highscore + '\n' + str(play_time))
+    rewrite_scores.close()
     sc.blit(fon, (0, 0))
     pygame.font.init()
     font = pygame.font.SysFont('Arial', 46)
@@ -141,7 +159,7 @@ while True:
         pygame.mouse.set_visible(True)
     # Вышли из лабиринти - конец игры
     if player.x < 80 and player.y < 80:
-        end_screen(sc, countofcoins - len([i for i in sprites.list_of_objects if i.blocked]), countofcoins)
+        end_screen(sc, countofcoins - len([i for i in sprites.list_of_objects if i.scale == 0.4]), countofcoins)
     # Нажатие кнопки q - режим разработчика с включенной картой
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
